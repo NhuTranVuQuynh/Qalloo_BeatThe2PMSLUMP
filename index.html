@@ -1,0 +1,714 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Beat the 2 PM Slump with Qalloo Energy</title>
+<link rel="icon" type="image/png" href="images/ollo-energy.png">
+<meta name="description" content="Beat the 2 PM Slump: wake Ollo, find your Qalloo Energy flavour and unlock code SLUMP5. Student campaign concept.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&amp;family=DM+Sans:wght@400;500;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#FFF9EC}
+a{color:#10204A}a:hover{color:#0A6FB0}
+@keyframes qShakeA{0%{transform:rotate(0)}20%{transform:rotate(-9deg) translateY(-6px)}40%{transform:rotate(8deg)}60%{transform:rotate(-6deg) translateY(-4px)}80%{transform:rotate(4deg)}100%{transform:rotate(0)}}
+@keyframes qShakeB{0%{transform:rotate(0)}20%{transform:rotate(9deg) translateY(-6px)}40%{transform:rotate(-8deg)}60%{transform:rotate(6deg) translateY(-4px)}80%{transform:rotate(-4deg)}100%{transform:rotate(0)}}
+@keyframes qBob{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+@keyframes qPop{0%{transform:scale(.6);opacity:0}70%{transform:scale(1.06);opacity:1}100%{transform:scale(1)}}
+@keyframes qIn{0%{transform:translateX(40px);opacity:0}100%{transform:translateX(0);opacity:1}}
+@keyframes qZzz{0%{transform:translate(0,0);opacity:0}30%{opacity:1}100%{transform:translate(18px,-40px);opacity:0}}
+.q-shakeA{animation:qShakeA .5s ease}
+.q-shakeB{animation:qShakeB .5s ease}
+.q-awake{animation:qBob 2.4s ease-in-out infinite}
+.q-pop{animation:qPop .45s ease-out both}
+.q-in{animation:qIn .4s ease-out both}
+.q-zzz{animation:qZzz 2.2s ease-in infinite}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<template id="tpl">
+<div style="font-family: 'DM Sans', system-ui, sans-serif; color: #10204A; background: #FFF9EC; width: 100%; min-height: 100vh; overflow-x: clip; display: flex; flex-direction: column">
+
+  <!-- STICKY TOP: brand + journey progress -->
+  <header style="position: sticky; top: 0; z-index: 20; background: rgba(255, 249, 236, 0.97); border-bottom: 1px solid #F1E6CC">
+    <div style="max-width: 1200px; margin: 0 auto; padding: 12px 20px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px">
+      <button type="button" onClick="{{goWake}}" style="font: inherit; cursor: pointer; background: transparent; border: 0; padding: 0; font-family: Fredoka, sans-serif; font-weight: 700; font-size: 30px; letter-spacing: -0.5px; color: #10204A">qalloo</button>
+      <ol aria-label="Your progress" style="list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px">
+        <sc-for list="{{steps}}" as="s" hint-placeholder-count="4">
+          <li>
+            <button type="button" onClick="{{s.go}}" disabled="{{s.locked}}" aria-current="{{s.current}}" style="font: inherit; cursor: {{s.cursor}}; border: 0; display: flex; align-items: center; gap: 8px; padding: 8px 14px 8px 8px; border-radius: 999px; font-weight: 700; font-size: 14px; background: {{s.bg}}; color: {{s.fg}}; opacity: {{s.opacity}}">
+              <span style="width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: {{s.dotBg}}; color: {{s.dotFg}}; font-size: 14px">{{s.mark}}</span>
+              {{s.label}}
+            </button>
+          </li>
+        </sc-for>
+      </ol>
+    </div>
+  </header>
+
+  <!-- ================= SCREEN 1: WAKE OLLO ================= -->
+  <sc-if value="{{isWake}}" hint-placeholder-val="{{ true }}">
+    <div style="flex: 1 0 auto; display: flex; flex-direction: column">
+      <div style="background: #10204A; color: #FFFFFF; text-align: center; padding: 10px 20px; font-size: 15px; font-weight: 500">{{sourceLine}}</div>
+      <section style="flex: 1 0 auto; background: {{heroBg}}; color: {{heroFg}}; transition: background .5s ease, color .5s ease">
+        <div style="max-width: 1200px; margin: 0 auto; padding: 56px 20px 72px; display: flex; flex-wrap: wrap; align-items: center; gap: 40px">
+          <div style="flex: 1 1 440px; min-width: 0; display: flex; flex-direction: column; gap: 20px">
+            <span style="align-self: flex-start; display: inline-flex; align-items: center; gap: 10px; background: {{clockBg}}; color: {{clockFg}}; font-weight: 700; font-size: 15px; padding: 8px 16px; border-radius: 999px">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg>
+              {{timeLine}}
+            </span>
+            <h1 style="margin: 0; font-family: Fredoka, sans-serif; font-weight: 700; font-size: clamp(46px, 7vw, 84px); line-height: 0.98; letter-spacing: -1.5px">{{headline}}</h1>
+            <p style="margin: 0; font-size: 20px; line-height: 1.5; max-width: 500px">{{subline}}</p>
+
+            <sc-if value="{{asleep}}" hint-placeholder-val="{{ true }}">
+              <div style="display: flex; flex-direction: column; gap: 14px; max-width: 460px">
+                <button type="button" onClick="{{shake}}" style="font: inherit; cursor: pointer; border: 0; background: #FFD84D; color: #10204A; font-weight: 700; font-size: 20px; padding: 20px 28px; border-radius: 999px; box-shadow: 0 6px 0 #0B1533; display: flex; align-items: center; justify-content: center; gap: 12px">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 3h6"></path><path d="M10 3v3l-2 3v11a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V9l-2-3V3"></path><path d="M8 13h8"></path></svg>
+                  {{shakeLabel}}
+                </button>
+                <span style="font-size: 15px; opacity: 0.85">Tap to shake the bottle. Every shake mixes in a bit more Qalloo Energy.</span>
+              </div>
+            </sc-if>
+            <sc-if value="{{awake}}" hint-placeholder-val="{{ false }}">
+              <div class="q-pop" style="display: flex; flex-direction: column; gap: 12px; max-width: 480px">
+                <button type="button" onClick="{{goQuiz}}" style="font: inherit; cursor: pointer; border: 0; background: #10204A; color: #FFFFFF; font-weight: 700; font-size: 20px; padding: 20px 28px; border-radius: 999px; box-shadow: 0 6px 0 rgba(16, 32, 74, 0.35); display: flex; align-items: center; justify-content: center; gap: 12px">
+                  Get Ollo's secret
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"></path><path d="M13 6l6 6-6 6"></path></svg>
+                </button>
+                <span style="font-size: 15px; font-weight: 500">3 quick taps to find your flavour. Code SLUMP5 is waiting at the end.</span>
+              </div>
+            </sc-if>
+
+            <div style="display: flex; flex-wrap: wrap; gap: 20px; font-size: 15px; font-weight: 500; opacity: 0.9">
+              <span><strong>4.77/5</strong> from 7,000+ reviews</span>
+              <span><strong>50,000+</strong> customers</span>
+              <span>Backed by <strong>Spadel</strong> (SPA, Bru)</span>
+            </div>
+          </div>
+
+          <div style="flex: 1 1 420px; min-width: 0; display: flex; flex-direction: column; align-items: center; gap: 20px">
+            <div style="position: relative; width: 100%; max-width: 460px; height: 380px; display: flex; align-items: flex-end; justify-content: center; gap: 12px">
+              <div style="position: absolute; left: 50%; top: 50%; width: 340px; height: 340px; margin: -170px 0 0 -170px; border-radius: 50%; background: {{haloBg}}; transition: background .5s ease"></div>
+              <sc-if value="{{asleep}}" hint-placeholder-val="{{ true }}">
+                <span class="q-zzz" aria-hidden="true" style="position: absolute; top: 40px; left: 52%; font-family: Fredoka, sans-serif; font-weight: 700; font-size: 34px; color: #7FD6FF">z</span>
+              </sc-if>
+              <img class="{{olloClass}}" src="{{olloImg}}" alt="{{olloAlt}}" style="position: relative; width: 270px; height: 270px; object-fit: contain; filter: {{olloFilter}}">
+              <svg class="{{bottleClass}}" width="96" height="230" viewBox="0 0 96 230" role="img" aria-label="Water bottle filling with Qalloo Energy" style="position: relative; flex: none">
+                <rect x="34" y="4" width="28" height="22" rx="5" fill="#10204A"></rect>
+                <rect x="12" y="30" width="72" height="194" rx="22" fill="#FFFFFF" stroke="#10204A" stroke-width="4"></rect>
+                <rect x="16" y="{{liquidY}}" width="64" height="{{liquidH}}" rx="18" fill="{{liquidColor}}"></rect>
+                <rect x="24" y="52" width="8" height="120" rx="4" fill="#FFFFFF" opacity="0.6"></rect>
+              </svg>
+            </div>
+            <div style="width: 100%; max-width: 420px; display: flex; flex-direction: column; gap: 8px">
+              <div style="display: flex; justify-content: space-between; font-weight: 700; font-size: 15px">
+                <span>Ollo's afternoon battery</span>
+                <span>{{energyPct}}</span>
+              </div>
+              <div role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{energy}}" aria-label="Ollo's afternoon battery" style="height: 18px; border-radius: 999px; background: rgba(255, 255, 255, 0.25); border: 2px solid {{heroFg}}; overflow: hidden">
+                <div style="height: 100%; width: {{energyPct}}; background: {{meterColor}}; border-radius: 999px; transition: width .35s ease"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section style="background: #10204A; color: #FFFFFF">
+        <div style="max-width: 1200px; margin: 0 auto; padding: 24px 20px; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px 32px; font-family: Fredoka, sans-serif; font-weight: 600; font-size: 21px">
+          <span>"Still three lectures to go?"</span>
+          <span style="color: #FFD84D">"Lunch over. Your day isn't."</span>
+          <span>"Third coffee, really?"</span>
+        </div>
+      </section>
+    </div>
+  </sc-if>
+
+  <!-- ================= SCREEN 2: FLAVOUR QUIZ ================= -->
+  <sc-if value="{{isQuiz}}" hint-placeholder-val="{{ false }}">
+    <section class="q-in" style="flex: 1 0 auto; background: #FFF9EC">
+      <div style="max-width: 860px; margin: 0 auto; padding: 56px 20px 80px; display: flex; flex-direction: column; gap: 28px">
+        <div style="display: flex; align-items: center; gap: 20px">
+          <img src="images/ollo-energy.png" alt="" aria-hidden="true" class="q-awake" style="width: 96px; height: 96px; object-fit: contain; flex: none">
+          <div style="display: flex; flex-direction: column; gap: 6px">
+            <span style="color: #C2410C; font-weight: 700; font-size: 14px; letter-spacing: 1.5px; text-transform: uppercase">Step 2 · Your flavour</span>
+            <h2 style="margin: 0; font-family: Fredoka, sans-serif; font-weight: 700; font-size: clamp(32px, 4.5vw, 48px); line-height: 1.05">{{quizTitle}}</h2>
+          </div>
+        </div>
+
+        <sc-if value="{{quizOpen}}" hint-placeholder-val="{{ true }}">
+          <div class="q-in" style="background: #FFFFFF; border: 3px solid #10204A; border-radius: 32px; padding: 32px; box-shadow: 0 8px 0 #10204A; display: flex; flex-direction: column; gap: 24px">
+            <div style="display: flex; align-items: center; justify-content: space-between; gap: 16px">
+              <span style="font-weight: 700; font-size: 15px">Question {{qNum}} of 3</span>
+              <div style="flex: 1 1 auto; max-width: 260px; height: 10px; background: #F1E6CC; border-radius: 999px; overflow: hidden">
+                <div style="height: 100%; width: {{qProgress}}; background: #FF9A5B; border-radius: 999px; transition: width .3s ease"></div>
+              </div>
+            </div>
+            <h3 style="margin: 0; font-family: Fredoka, sans-serif; font-weight: 600; font-size: 30px; line-height: 1.15">{{question.title}}</h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px">
+              <sc-for list="{{question.options}}" as="o" hint-placeholder-count="4">
+                <button type="button" onClick="{{o.pick}}" style="font: inherit; cursor: pointer; text-align: left; background: #FFF9EC; color: #10204A; border: 2px solid #F1E6CC; border-radius: 20px; padding: 18px; display: flex; flex-direction: column; gap: 6px">
+                  <span style="font-family: Fredoka, sans-serif; font-weight: 600; font-size: 21px">{{o.label}}</span>
+                  <span style="font-size: 15px; color: #4A5578">{{o.hint}}</span>
+                </button>
+              </sc-for>
+            </div>
+            <button type="button" onClick="{{back}}" style="font: inherit; cursor: pointer; align-self: flex-start; background: transparent; border: 0; color: #10204A; font-weight: 700; font-size: 15px; text-decoration: underline; padding: 10px 0">{{backLabel}}</button>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{quizDone}}" hint-placeholder-val="{{ false }}">
+          <div class="q-pop" style="background: #10204A; color: #FFFFFF; border-radius: 32px; padding: 32px; display: flex; flex-wrap: wrap; align-items: center; gap: 28px">
+            <img src="{{result.img}}" alt="{{result.name}}" style="width: 170px; height: 170px; object-fit: contain; background: #FFF9EC; border-radius: 50%; padding: 14px; box-sizing: border-box">
+            <div style="flex: 1 1 340px; min-width: 0; display: flex; flex-direction: column; gap: 10px">
+              <span style="color: #FFD84D; font-weight: 700; font-size: 14px; letter-spacing: 1.5px; text-transform: uppercase">You're {{result.name}}</span>
+              <h3 style="margin: 0; font-family: Fredoka, sans-serif; font-weight: 700; font-size: 32px; line-height: 1.1">{{result.headline}}</h3>
+              <p style="margin: 0; font-size: 17px; line-height: 1.55; color: #D6DDF0">{{swapLine}}</p>
+              <p style="margin: 0; font-size: 17px; line-height: 1.55">Your flavour match: <strong style="color: #FFD84D">{{flavour}}</strong></p>
+            </div>
+            <img src="{{matchImg}}" alt="Qalloo Energy {{flavour}} box" style="width: 170px; height: 170px; object-fit: contain; border-radius: 24px; background: {{matchBg}}">
+            <div style="flex: 1 1 100%; display: flex; flex-wrap: wrap; gap: 12px; align-items: center; border-top: 1px solid #2B3E78; padding-top: 22px">
+              <span style="font-weight: 700; font-size: 16px">Code unlocked:</span>
+              <span style="font-family: Fredoka, sans-serif; font-weight: 700; font-size: 26px; letter-spacing: 2px; background: #FFD84D; color: #10204A; padding: 6px 16px; border-radius: 12px">SLUMP5</span>
+              <button type="button" onClick="{{restartQuiz}}" style="font: inherit; cursor: pointer; background: transparent; border: 0; color: #FFFFFF; font-weight: 700; font-size: 15px; text-decoration: underline; padding: 10px 0">Retake</button>
+              <button type="button" onClick="{{goPack}}" style="margin-left: auto; font: inherit; cursor: pointer; border: 0; background: #FFD84D; color: #10204A; font-weight: 700; font-size: 18px; padding: 16px 26px; border-radius: 999px; display: flex; align-items: center; gap: 10px">
+                See my pack
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"></path><path d="M13 6l6 6-6 6"></path></svg>
+              </button>
+            </div>
+          </div>
+        </sc-if>
+      </div>
+    </section>
+  </sc-if>
+
+  <!-- ================= SCREEN 3: YOUR PACK ================= -->
+  <sc-if value="{{isPack}}" hint-placeholder-val="{{ false }}">
+    <section class="q-in" style="flex: 1 0 auto; background: #FFD84D">
+      <div style="max-width: 1200px; margin: 0 auto; padding: 56px 20px 80px; display: flex; flex-direction: column; gap: 32px">
+        <div style="display: flex; flex-wrap: wrap; align-items: stretch; gap: 32px">
+          <div style="flex: 1 1 440px; min-width: 0; display: flex; flex-direction: column; gap: 18px">
+            <span style="font-weight: 700; font-size: 14px; letter-spacing: 1.5px; text-transform: uppercase">Step 3 · Picked for {{result.name}}</span>
+            <h2 style="margin: 0; font-family: Fredoka, sans-serif; font-weight: 700; font-size: clamp(36px, 4.8vw, 56px); line-height: 1.02">Your Energy Starter Pack is ready.</h2>
+            <p style="margin: 0; font-size: 18px; line-height: 1.55">16 sachets, all four Energy flavours. That's 16 afternoons to find out which one is really yours, at about €1.53 a slump.</p>
+            <div style="display: flex; flex-direction: column; gap: 12px">
+              <span style="font-weight: 700; font-size: 15px">Compare the flavours in your pack:</span>
+              <div role="tablist" aria-label="Energy flavours" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px">
+                <sc-for list="{{flavourTabs}}" as="f" hint-placeholder-count="4">
+                  <button type="button" role="tab" aria-selected="{{f.selected}}" onClick="{{f.pick}}" style="font: inherit; cursor: pointer; text-align: left; color: #10204A; background: {{f.bg}}; border: {{f.border}}; box-shadow: {{f.shadow}}; border-radius: 16px; padding: 12px 14px; display: flex; flex-direction: column; gap: 6px; min-height: 44px">
+                    <span style="display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 16px">
+                      <span style="width: 18px; height: 18px; border-radius: 50%; background: {{f.dot}}; border: 2px solid #10204A; flex: none"></span>
+                      {{f.name}}
+                    </span>
+                    <sc-if value="{{f.match}}" hint-placeholder-val="{{ false }}">
+                      <span style="align-self: flex-start; background: #10204A; color: #FFD84D; font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; padding: 4px 8px; border-radius: 999px">Your match</span>
+                    </sc-if>
+                  </button>
+                </sc-for>
+              </div>
+              <div class="q-pop" style="background: #FFFFFF; border: 2px solid #10204A; border-radius: 20px; padding: 18px 20px; display: flex; flex-direction: column; gap: 6px">
+                <span style="font-family: Fredoka, sans-serif; font-weight: 700; font-size: 24px">{{view.name}}</span>
+                <span style="font-size: 16px; line-height: 1.5">{{view.desc}}</span>
+                <sc-if value="{{viewIsOther}}" hint-placeholder-val="{{ false }}">
+                  <button type="button" onClick="{{backToMatch}}" style="font: inherit; cursor: pointer; align-self: flex-start; background: transparent; border: 0; padding: 8px 0; color: #10204A; font-weight: 700; font-size: 15px; text-decoration: underline">Back to my match: {{flavour}}</button>
+                </sc-if>
+              </div>
+              <span style="font-size: 14px; font-weight: 500">All four flavours are in the Starter Pack, 4 sachets each.</span>
+            </div>
+            <div style="display: flex; flex-wrap: wrap; gap: 16px; font-size: 15px; font-weight: 500">
+              <span><strong>80 mg</strong> natural caffeine</span>
+              <span><strong>Sugar-free</strong></span>
+              <span><strong>7</strong> kcal</span>
+              <span><strong>8</strong> B vitamins</span>
+              <span><strong>Vegan</strong></span>
+              <span>Made in <strong>Belgium</strong></span>
+            </div>
+          </div>
+
+          <div style="flex: 1 1 400px; min-width: 0; background: #FFFFFF; border: 3px solid #10204A; border-radius: 32px; box-shadow: 0 10px 0 #10204A; padding: 32px; display: flex; flex-direction: column; gap: 18px">
+            <div style="border-radius: 20px; overflow: hidden; background: {{view.bg}}; aspect-ratio: 1 / 1; max-height: 420px; display: flex; align-items: center; justify-content: center">
+              <img class="q-pop" src="{{view.img}}" alt="{{view.alt}}" style="width: 100%; height: 100%; object-fit: contain; display: block">
+            </div>
+            <div style="display: flex; flex-wrap: wrap; align-items: baseline; gap: 12px">
+              <span style="font-family: Fredoka, sans-serif; font-weight: 700; font-size: 54px; line-height: 1">€24.50</span>
+              <span style="font-size: 16px; font-weight: 500">16 sachets · €41.50 with a 1.2 L bottle</span>
+            </div>
+            <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; background: #E7F8EE; border: 2px solid #136B3A; color: #0E4F2B; border-radius: 16px; padding: 14px 16px">
+              <span style="font-weight: 700; font-size: 16px">SLUMP5 unlocked: [discount] off your first pack</span>
+              <button type="button" onClick="{{copyCode}}" style="font: inherit; cursor: pointer; background: #136B3A; color: #FFFFFF; border: 0; font-weight: 700; font-size: 15px; padding: 10px 16px; border-radius: 999px">{{copyLabel}}</button>
+            </div>
+            <button type="button" onClick="{{goCheckout}}" style="font: inherit; cursor: pointer; border: 0; background: #10204A; color: #FFFFFF; font-weight: 700; font-size: 20px; padding: 20px 28px; border-radius: 999px">Get my Energy Starter Pack</button>
+            <div style="display: flex; flex-wrap: wrap; gap: 8px 18px; font-size: 14px; font-weight: 500">
+              <span>30-day flavour guarantee, money back</span>
+              <span>Offer ends 31 March · <strong>{{daysLeft}}</strong></span>
+              <span><strong>4.77/5</strong> · 7,000+ reviews</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- hesitation exit → Q&A -->
+        <button type="button" onClick="{{goFaq}}" style="font: inherit; cursor: pointer; text-align: left; background: rgba(255, 255, 255, 0.55); color: #10204A; border: 2px solid #10204A; border-radius: 24px; padding: 20px 24px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px">
+          <span style="display: flex; align-items: center; gap: 16px">
+            <img src="images/ollo-sleepy.png" alt="" aria-hidden="true" style="width: 64px; height: 64px; object-fit: contain; flex: none">
+            <span style="display: flex; flex-direction: column; gap: 4px">
+              <span style="font-family: Fredoka, sans-serif; font-weight: 600; font-size: 22px">Still got a few questions before you beat the slump?</span>
+              <span style="font-size: 16px">Taste, caffeine, sugar, subscriptions: it's all in our Q&amp;A.</span>
+            </span>
+          </span>
+          <span style="background: #10204A; color: #FFFFFF; font-weight: 700; font-size: 16px; padding: 14px 20px; border-radius: 999px; display: flex; align-items: center; gap: 8px">Go to the Q&amp;A
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"></path><path d="M13 6l6 6-6 6"></path></svg>
+          </span>
+        </button>
+      </div>
+    </section>
+  </sc-if>
+
+  <!-- ================= SCREEN 4: Q&A ================= -->
+  <sc-if value="{{isFaq}}" hint-placeholder-val="{{ false }}">
+    <section class="q-in" style="flex: 1 0 auto; background: #DFF4FF">
+      <div style="max-width: 860px; margin: 0 auto; padding: 56px 20px 80px; display: flex; flex-direction: column; gap: 24px">
+        <button type="button" onClick="{{goPack}}" style="font: inherit; cursor: pointer; align-self: flex-start; background: transparent; border: 0; color: #10204A; font-weight: 700; font-size: 15px; text-decoration: underline; padding: 10px 0">Back to my pack</button>
+        <div style="display: flex; flex-direction: column; gap: 8px">
+          <span style="color: #0A6FB0; font-weight: 700; font-size: 14px; letter-spacing: 1.5px; text-transform: uppercase">Q&amp;A</span>
+          <h2 style="margin: 0; font-family: Fredoka, sans-serif; font-weight: 700; font-size: clamp(32px, 4.5vw, 48px); line-height: 1.05">Good questions. Straight answers.</h2>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 12px">
+          <sc-for list="{{faqs}}" as="f" hint-placeholder-count="5">
+            <div style="background: #FFFFFF; border-radius: 20px; overflow: hidden">
+              <button type="button" onClick="{{f.toggle}}" aria-expanded="{{f.expanded}}" style="font: inherit; cursor: pointer; width: 100%; text-align: left; background: transparent; border: 0; color: #10204A; padding: 20px 22px; display: flex; align-items: center; justify-content: space-between; gap: 16px; font-weight: 700; font-size: 18px">
+                {{f.q}}
+                <span aria-hidden="true" style="font-family: Fredoka, sans-serif; font-size: 26px; line-height: 1">{{f.sign}}</span>
+              </button>
+              <sc-if value="{{f.open}}" hint-placeholder-val="{{ false }}">
+                <p style="margin: 0; padding: 0 22px 20px; font-size: 16px; line-height: 1.55; color: #33406A">{{f.a}}</p>
+              </sc-if>
+            </div>
+          </sc-for>
+        </div>
+
+        <!-- last nudge → trial checkout -->
+        <div style="background: #10204A; color: #FFFFFF; border-radius: 32px; padding: 32px; display: flex; flex-wrap: wrap; align-items: center; gap: 24px">
+          <img src="images/ollo-energy.png" alt="" aria-hidden="true" class="q-awake" style="width: 120px; height: 120px; object-fit: contain; flex: none">
+          <div style="flex: 1 1 320px; min-width: 0; display: flex; flex-direction: column; gap: 8px">
+            <h3 style="margin: 0; font-family: Fredoka, sans-serif; font-weight: 700; font-size: 30px; line-height: 1.1">Still not sure? Make it your trial.</h3>
+            <p style="margin: 0; font-size: 17px; line-height: 1.55; color: #D6DDF0">Try the Energy Starter Pack. Don't love the taste? Our 30-day flavour guarantee gets you your money back, so there's nothing to worry about.</p>
+          </div>
+          <button type="button" onClick="{{goCheckout}}" style="font: inherit; cursor: pointer; border: 0; background: #FFD84D; color: #10204A; font-weight: 700; font-size: 18px; padding: 18px 26px; border-radius: 999px; display: flex; align-items: center; gap: 10px">
+            Try it risk-free
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"></path><path d="M13 6l6 6-6 6"></path></svg>
+          </button>
+        </div>
+      </div>
+    </section>
+  </sc-if>
+
+  <!-- ================= SCREEN 5: TRIAL CHECKOUT ================= -->
+  <sc-if value="{{isCheckout}}" hint-placeholder-val="{{ false }}">
+    <section class="q-in" style="flex: 1 0 auto; background: #FFF9EC">
+      <div style="max-width: 1100px; margin: 0 auto; padding: 56px 20px 80px; display: flex; flex-wrap: wrap; gap: 32px; align-items: flex-start">
+        <div style="flex: 1 1 440px; min-width: 0; background: #FFFFFF; border: 3px solid #10204A; border-radius: 32px; box-shadow: 0 10px 0 #10204A; padding: 32px; display: flex; flex-direction: column; gap: 20px">
+          <span style="color: #C2410C; font-weight: 700; font-size: 14px; letter-spacing: 1.5px; text-transform: uppercase">Step 4 · Your trial pack</span>
+          <h2 style="margin: 0; font-family: Fredoka, sans-serif; font-weight: 700; font-size: clamp(32px, 4.2vw, 46px); line-height: 1.05">One step from beating the slump.</h2>
+          <div style="display: flex; align-items: center; gap: 16px; background: #FFF9EC; border-radius: 20px; padding: 16px">
+            <img src="{{comboImg}}" alt="The four Qalloo Energy sachets in the Starter Pack" style="width: 96px; height: 96px; object-fit: contain; border-radius: 14px; flex: none; background: #FCD9B5">
+            <div style="display: flex; flex-direction: column; gap: 4px">
+              <span style="font-weight: 700; font-size: 18px">Energy Starter Pack</span>
+              <span style="font-size: 15px">16 sachets · for {{result.name}} · your match: {{flavour}}</span>
+            </div>
+          </div>
+          <dl style="margin: 0; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 10px 16px; font-size: 16px">
+            <dt>Energy Starter Pack</dt><dd style="margin: 0; font-weight: 700">€24.50</dd>
+            <dt>Code SLUMP5</dt><dd style="margin: 0; font-weight: 700; color: #136B3A">−[discount]</dd>
+            <dt>Standard delivery in Belgium</dt><dd style="margin: 0; font-weight: 700">€4.95</dd>
+            <dt style="font-weight: 700; font-size: 18px; border-top: 2px solid #F1E6CC; padding-top: 10px">Total</dt><dd style="margin: 0; font-family: Fredoka, sans-serif; font-weight: 700; font-size: 26px; border-top: 2px solid #F1E6CC; padding-top: 10px">[total]</dd>
+          </dl>
+          <a href="#checkout" style="text-align: center; background: #10204A; color: #FFFFFF; text-decoration: none; font-weight: 700; font-size: 20px; padding: 20px 28px; border-radius: 999px">Go to checkout</a>
+          <span style="font-size: 13px; color: #4A5578; text-align: center">[Links to the Qalloo shop with SLUMP5 already applied]</span>
+        </div>
+
+        <div style="flex: 1 1 360px; min-width: 0; display: flex; flex-direction: column; gap: 16px">
+          <div style="background: #E7F8EE; border: 2px solid #136B3A; border-radius: 24px; padding: 24px; display: flex; gap: 14px; align-items: flex-start">
+            <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#136B3A" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none"><path d="M12 3l8 3v6c0 4.5-3.4 8-8 9-4.6-1-8-4.5-8-9V6z"></path><path d="M8.5 12l2.5 2.5 4.5-5"></path></svg>
+            <div style="display: flex; flex-direction: column; gap: 6px; color: #0E4F2B">
+              <span style="font-weight: 700; font-size: 18px">30-day flavour guarantee</span>
+              <span style="font-size: 15px; line-height: 1.5">Not your taste? Ask for a refund within 30 days, fill in a short survey and you get your money back. Valid on your first Starter Pack.</span>
+            </div>
+          </div>
+          <div style="background: #FF5B6E; border-radius: 24px; padding: 24px; display: flex; flex-direction: column; gap: 12px">
+            <span style="font-family: Fredoka, sans-serif; font-weight: 700; font-size: 24px; line-height: 1.15">Tag your 2 PM slump buddy.</span>
+            <span style="font-size: 15px; line-height: 1.5">Everyone has one. Send them the quiz and see which Ollo they are.</span>
+            <button type="button" onClick="{{share}}" style="font: inherit; cursor: pointer; align-self: flex-start; background: #10204A; color: #FFFFFF; border: 0; font-weight: 700; font-size: 16px; padding: 14px 20px; border-radius: 999px">{{shareLabel}}</button>
+          </div>
+          <div style="background: #10204A; color: #FFFFFF; border-radius: 24px; padding: 24px; display: flex; align-items: center; gap: 16px">
+            <img src="images/ollo-sleepy.png" alt="" aria-hidden="true" style="width: 72px; height: 72px; object-fit: contain; flex: none">
+            <div style="display: flex; flex-direction: column; gap: 10px; min-width: 0">
+              <span style="font-family: Fredoka, sans-serif; font-weight: 700; font-size: 22px; line-height: 1.15">Ollo slumps every day at 2 PM.</span>
+              <span style="font-size: 15px; line-height: 1.5; color: #D6DDF0">Follow him on Instagram for daily slump rescues, new flavour drops and the latest deals first.</span>
+              <a href="#instagram" style="align-self: flex-start; background: #FFD84D; color: #10204A; text-decoration: none; font-weight: 700; font-size: 16px; padding: 12px 18px; border-radius: 999px; display: inline-flex; align-items: center; gap: 8px">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"></rect><circle cx="12" cy="12" r="4"></circle><circle cx="17.5" cy="6.5" r="0.6"></circle></svg>
+                Follow [@campaign_handle]
+              </a>
+            </div>
+          </div>
+          <button type="button" onClick="{{goFaq}}" style="font: inherit; cursor: pointer; align-self: flex-start; background: transparent; border: 0; color: #10204A; font-weight: 700; font-size: 15px; text-decoration: underline; padding: 10px 0">Back to the Q&amp;A</button>
+        </div>
+      </div>
+    </section>
+  </sc-if>
+
+  <!-- FOOTER -->
+  
+
+  <!-- STICKY BOTTOM: always the next step -->
+  <div style="position: sticky; bottom: 0; z-index: 20; padding: 12px 16px 16px; display: flex; justify-content: center; pointer-events: none">
+    <div style="pointer-events: auto; width: 100%; max-width: 640px; background: #10204A; color: #FFFFFF; border-radius: 999px; padding: 8px 8px 8px 22px; display: flex; align-items: center; justify-content: space-between; gap: 12px; box-shadow: 0 10px 30px rgba(16, 32, 74, 0.35)">
+      <span style="font-size: 15px; font-weight: 500; line-height: 1.3">{{barText}}</span>
+      <button type="button" onClick="{{barGo}}" style="flex: none; font: inherit; cursor: pointer; border: 0; background: #FFD84D; color: #10204A; font-weight: 700; font-size: 16px; padding: 14px 20px; border-radius: 999px">{{barCta}}</button>
+    </div>
+  </div><footer style="background: #10204A; color: #D6DDF0">
+    <div style="max-width: 1200px; margin: 0 auto; padding: 14px 20px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 6px 20px; font-size: 13px; line-height: 1.5"><span>Contains caffeine (80 mg). Adults only, max one a day. Not for pregnant or breastfeeding women.</span>
+      <span>Qalloo: student campaign concept</span>
+    </div>
+  </footer>
+
+</div>
+</template>
+<script>
+(function () {
+  // ---- tiny runtime: renders the {{holes}}, <sc-if> and <sc-for> template ----
+  function DCLogic(props) { this.props = props || {}; this.state = {}; }
+  DCLogic.prototype.setState = function (patch) {
+    var p = typeof patch === 'function' ? patch(this.state, this.props) : patch;
+    this.state = Object.assign({}, this.state, p);
+    schedule();
+  };
+  DCLogic.prototype.forceUpdate = function () { schedule(); };
+  window.DCLogic = DCLogic;
+
+  var HOLE = /\{\{\s*([^}]+?)\s*\}\}/g, WHOLE = /^\{\{\s*([^}]+?)\s*\}\}$/;
+  function look(path, ctx) {
+    if (path === 'true') return true;
+    if (path === 'false') return false;
+    if (path === 'null') return null;
+    if (/^-?\d+(\.\d+)?$/.test(path)) return parseFloat(path);
+    var parts = path.split('.'), v = ctx;
+    for (var i = 0; i < parts.length; i++) { if (v == null) return undefined; v = v[parts[i]]; }
+    return v;
+  }
+  function interp(str, ctx) {
+    return str.replace(HOLE, function (_, p) { var v = look(p, ctx); return v == null ? '' : String(v); });
+  }
+  function build(node, ctx, out) {
+    if (node.nodeType === 3) { out.push(document.createTextNode(interp(node.nodeValue, ctx))); return; }
+    if (node.nodeType !== 1) return;
+    var tag = node.localName;
+    if (tag === 'sc-if') {
+      var m = (node.getAttribute('value') || '').match(WHOLE);
+      if (m && look(m[1], ctx)) node.childNodes.forEach(function (c) { build(c, ctx, out); });
+      return;
+    }
+    if (tag === 'sc-for') {
+      var lm = (node.getAttribute('list') || '').match(WHOLE);
+      var list = lm ? look(lm[1], ctx) : [];
+      var as = node.getAttribute('as') || 'item';
+      (list || []).forEach(function (item, i) {
+        var c2 = Object.create(ctx); c2[as] = item; c2.$index = i;
+        node.childNodes.forEach(function (c) { build(c, c2, out); });
+      });
+      return;
+    }
+    var el = node.namespaceURI === 'http://www.w3.org/2000/svg'
+      ? document.createElementNS(node.namespaceURI, node.tagName) : document.createElement(tag);
+    for (var i = 0; i < node.attributes.length; i++) {
+      var a = node.attributes[i], name = a.name, val = a.value;
+      if (name.indexOf('hint-') === 0) continue;
+      var w = val.match(WHOLE);
+      if (name.indexOf('on') === 0) { if (w) el['_' + name] = look(w[1], ctx); continue; }
+      if (w) {
+        var v = look(w[1], ctx);
+        if (v === false || v == null) continue;
+        el.setAttribute(name, v === true ? '' : String(v));
+      } else el.setAttribute(name, interp(val, ctx));
+    }
+    var kids = [];
+    node.childNodes.forEach(function (c) { build(c, ctx, kids); });
+    kids.forEach(function (k) { el.appendChild(k); });
+    out.push(el);
+  }
+  // ---- patch the live DOM in place so animations don't restart on every click ----
+  function same(a, b) { return a.nodeType === b.nodeType && a.nodeName === b.nodeName; }
+  function morph(oldN, newN) {
+    if (oldN.nodeType === 3) { if (oldN.nodeValue !== newN.nodeValue) oldN.nodeValue = newN.nodeValue; return; }
+    var i, oa = oldN.attributes, na = newN.attributes;
+    for (i = oa.length - 1; i >= 0; i--) if (!newN.hasAttribute(oa[i].name)) oldN.removeAttribute(oa[i].name);
+    for (i = 0; i < na.length; i++) if (oldN.getAttribute(na[i].name) !== na[i].value) oldN.setAttribute(na[i].name, na[i].value);
+    oldN._onclick = newN._onclick;
+    morphKids(oldN, newN.childNodes);
+  }
+  function morphKids(parent, newKids) {
+    var nk = Array.prototype.slice.call(newKids), ok = parent.childNodes;
+    for (var i = 0; i < nk.length; i++) {
+      var o = ok[i];
+      if (!o) parent.appendChild(nk[i]);
+      else if (same(o, nk[i])) morph(o, nk[i]);
+      else parent.replaceChild(nk[i], o);
+    }
+    while (ok.length > nk.length) parent.removeChild(parent.lastChild);
+  }
+  var tpl, root, comp, queued = false;
+  function render() {
+    queued = false;
+    var out = [];
+    tpl.content.childNodes.forEach(function (c) { build(c, comp.renderVals(), out); });
+    morphKids(root, out);
+  }
+  function schedule() { if (!queued) { queued = true; requestAnimationFrame(render); } }
+  document.addEventListener('click', function (e) {
+    var el = e.target;
+    while (el && el !== document) {
+      if (el._onclick) { if (el.disabled) return; el._onclick(e); return; }
+      el = el.parentNode;
+    }
+  });
+  window.__mount = function (Component, props) {
+    tpl = document.getElementById('tpl'); root = document.getElementById('app');
+    comp = new Component(props);
+    render();
+    if (comp.componentDidMount) comp.componentDidMount();
+  };
+})();
+</script>
+<script>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { viewFlav: null, screen: 'wake', energy: 12, flip: false, q: 0, answers: [], faq: 0, copied: false, shared: false, tick: 0 };
+  }
+  componentDidMount() {
+    var self = this;
+    this._t = setInterval(function () { self.setState({ tick: self.state.tick + 1 }); }, 30000);
+  }
+  componentWillUnmount() { clearInterval(this._t); }
+
+  mix(a, b, t) {
+    function h(c) { return [parseInt(c.slice(1, 3), 16), parseInt(c.slice(3, 5), 16), parseInt(c.slice(5, 7), 16)]; }
+    var x = h(a), y = h(b);
+    return 'rgb(' + x.map(function (v, i) { return Math.round(v + (y[i] - v) * t); }).join(',') + ')';
+  }
+
+  go(screen) {
+    this.setState({ screen: screen });
+    try { window.scrollTo({ top: 0, behavior: 'smooth' }); } catch (err) {}
+  }
+
+  renderVals() {
+    var self = this;
+    var s = this.state;
+    var BLOB = {
+      sleepy: 'images/ollo-sleepy.png', energy: 'images/ollo-energy.png',
+      happy: 'images/ollo-busy.png', refreshed: 'images/ollo-always-on.png',
+      focused: 'images/ollo-deadline.png'
+    };
+    function goTo(x) { return function () { self.go(x); }; }
+
+    // ---- time of day ----
+    var clock = this.props.clock ?? '14:05';
+    var hh, mm;
+    if (clock === 'Live') { var d = new Date(); hh = d.getHours(); mm = d.getMinutes(); }
+    else { hh = parseInt(clock.split(':')[0], 10); mm = parseInt(clock.split(':')[1], 10); }
+    var time = (hh < 10 ? '0' : '') + hh + ':' + (mm < 10 ? '0' : '') + mm;
+    var slump = hh >= 13 && hh < 16;
+    var early = hh < 13;
+
+    // ---- screen 1 ----
+    var e = Math.max(0, Math.min(100, s.energy));
+    var awake = e >= 100;
+    var t = e / 100;
+    var headline, subline;
+    if (awake) { headline = 'Yay, you woke Ollo up!'; subline = 'You helped Ollo beat his lunch slump. To say thanks, he’s sharing his secret with you: the Qalloo Energy flavour that gets you through 2 PM.'; }
+    else if (slump) { headline = 'Ollo hit the 2 PM slump. Again.'; subline = 'Lunch over, battery low. Sound familiar? Shake his bottle to help him through the afternoon.'; }
+    else if (early) { headline = 'The 2 PM slump is coming.'; subline = 'Ollo is already yawning just thinking about it. Shake his bottle and get ready for this afternoon.'; }
+    else { headline = 'You survived 2 PM. Ollo didn’t.'; subline = 'Tomorrow comes round fast. Shake his bottle and be ready for the next slump.'; }
+    var timeLine = slump ? 'It’s ' + time + '. Peak slump time.' : (early ? 'It’s ' + time + '. The slump hits at 2 PM.' : 'It’s ' + time + '. Slump survived?');
+    var shakesLeft = Math.ceil((100 - e) / 22);
+
+    // ---- screen 2: quiz ----
+    var Q = [
+      { title: 'How do you feel at 2 PM?', options: [
+        { id: 'sleepy', label: 'Sleepy', hint: 'Eyelids clocking out early' },
+        { id: 'distracted', label: 'Distracted', hint: '14 tabs open, 0 done' },
+        { id: 'coffee', label: 'Running on coffee', hint: 'Cup number three, at least' },
+        { id: 'strong', label: 'Still going strong', hint: 'Gym after work, obviously' } ] },
+      { title: 'What do you usually grab?', options: [
+        { id: 'coffee', label: 'Another coffee', hint: 'The default' },
+        { id: 'can', label: 'An energy drink', hint: 'From the vending machine' },
+        { id: 'sweet', label: 'Something sweet', hint: 'Just a small one. Twice.' },
+        { id: 'none', label: 'Nothing, I push through', hint: 'Respect' } ] },
+      { title: 'Pick your flavour vibe', options: [
+        { id: 'citrus', label: 'Zesty & sharp', hint: 'Wakes up your taste buds' },
+        { id: 'berry', label: 'Berry & fruity', hint: 'Sweet-ish, still sugar-free' },
+        { id: 'tropical', label: 'Tropical', hint: 'Holiday in a bottle' },
+        { id: 'surprise', label: 'Fresh & juicy', hint: 'Summer, any time of year' } ] }
+    ];
+    var quizDone = s.answers.length >= 3;
+    var qi = Math.min(s.q, 2);
+    var question = Object.assign({}, Q[qi], {
+      options: Q[qi].options.map(function (o) {
+        return Object.assign({}, o, { pick: function () {
+          var a = s.answers.slice(0, qi); a[qi] = o.id;
+          self.setState({ answers: a, q: qi + 1 });
+        } });
+      })
+    });
+    var TYPES = {
+      sleepy: { name: 'Sleepy Ollo', img: BLOB.sleepy, headline: 'Lunch hits, you power down.' },
+      distracted: { name: 'Busy Ollo', img: BLOB.happy, headline: 'Everything at once, all afternoon.' },
+      coffee: { name: 'Deadline Ollo', img: BLOB.focused, headline: 'Fuelled by deadlines and espresso.' },
+      strong: { name: 'Always-On Ollo', img: BLOB.refreshed, headline: 'You don’t slump. Let’s keep it that way.' }
+    };
+    var SWAP = {
+      coffee: 'Swap the afternoon coffee for a bottle you sip slowly: 80 mg natural caffeine, and you drink your water while you’re at it.',
+      can: 'Swap the can for a sachet: the caffeine without the added sugar, around 7 kcal a serving.',
+      sweet: 'Swap the sweet snack for something fruity: real flavour, no added sugar.',
+      none: 'No need to just push through. One sachet in your water and you’ve got a fruity afternoon ritual.'
+    };
+    var FLAV = { citrus: 'Lemon Lime', berry: 'Wild Berries', tropical: 'Tropical Fruits', surprise: 'Watermelon' };
+    var result = TYPES[s.answers[0]] || TYPES.sleepy;
+    var flavour = FLAV[s.answers[2]] || FLAV.surprise;
+    var PACK = {
+      tropical: { img: 'images/pack-tropical-fruits.jpg', bg: '#FEE9CE', dot: '#FF9A5B', desc: 'Pineapple and mango. Sunny, juicy and the most holiday-like of the four.' },
+      berry: { img: 'images/pack-wild-berries.jpg', bg: '#FCC0C7', dot: '#E84E8A', desc: 'Raspberry, blueberry and blackcurrant. Fruity and round, still sugar-free.' },
+      citrus: { img: 'images/pack-lemon-lime.jpg', bg: '#CBE9DA', dot: '#C6E34B', desc: 'Lemon and lime with a little ginger. Fresh and zesty, great for the post-lunch dip.' },
+      surprise: { img: 'images/pack-watermelon.jpg', bg: '#CAE18C', dot: '#3DAA4A', desc: 'Watermelon. Light, juicy and easy to sip all afternoon.' },
+      all: { img: 'images/sachets-all-four.jpg', bg: '#FCD9B5', dot: 'conic-gradient(#FF9A5B 0 25%, #E84E8A 0 50%, #C6E34B 0 75%, #3DAA4A 0)', desc: 'Can\u2019t pick one? You don\u2019t have to. The Starter Pack is the mix: 4 sachets of every flavour, so you find your favourite before you commit to a bigger box.' }
+    };
+    var matchId = s.answers[2] || 'surprise';
+    var viewId = s.viewFlav || matchId;
+    var NAMES = Object.assign({ all: 'All 4 flavours' }, FLAV);
+    var view = Object.assign({ name: NAMES[viewId], alt: viewId === 'all' ? 'The four Qalloo Energy sachets side by side' : 'Qalloo Energy ' + FLAV[viewId] + ' box with a sachet' }, PACK[viewId]);
+    var flavourTabs = ['tropical', 'berry', 'citrus', 'surprise', 'all'].map(function (id) {
+      var sel = id === viewId;
+      return { name: id === 'all' ? 'Can\u2019t decide? All 4' : FLAV[id], dot: PACK[id].dot, match: id === matchId, selected: sel ? 'true' : 'false',
+        bg: sel ? '#FFFFFF' : 'rgba(255,255,255,0.45)', border: sel ? '3px solid #10204A' : '2px solid #10204A',
+        shadow: sel ? '0 4px 0 #10204A' : 'none',
+        pick: function () { self.setState({ viewFlav: id }); } };
+    });
+
+    // ---- journey steps ----
+    var order = ['wake', 'quiz', 'pack', 'checkout'];
+    var labels = ['Wake Ollo', 'Your flavour', 'Your pack', 'Checkout'];
+    var reached = [true, awake, quizDone, quizDone];
+    var curIdx = s.screen === 'faq' ? 2 : order.indexOf(s.screen);
+    var steps = order.map(function (id, i) {
+      var isNow = i === curIdx, isDone = i < curIdx && reached[i], locked = !reached[i];
+      return {
+        label: labels[i], mark: isDone ? '✓' : String(i + 1),
+        go: goTo(id), locked: locked, current: isNow ? 'step' : 'false',
+        cursor: locked ? 'not-allowed' : 'pointer', opacity: locked ? '0.55' : '1',
+        bg: isNow ? '#10204A' : (isDone ? '#E7F8EE' : '#FFFFFF'),
+        fg: isNow ? '#FFFFFF' : '#10204A',
+        dotBg: isDone ? '#136B3A' : (isNow ? '#FFD84D' : '#F1E6CC'),
+        dotFg: isDone ? '#FFFFFF' : '#10204A'
+      };
+    });
+
+    // ---- source ----
+    var src = this.props.source ?? 'Instagram Reel';
+    var sourceLine = src === 'Campus booth QR'
+      ? 'Tasted it at the 2 PM Slump Station? Get Ollo’s secret energy drink risk-free with code SLUMP5.'
+      : 'Try Ollo’s secret energy drink risk-free with code SLUMP5 · 30-day flavour guarantee';
+
+    // ---- countdown ----
+    var days = Math.ceil((new Date(2027, 2, 31, 23, 59, 59) - new Date()) / 86400000);
+    var daysLeft = days > 1 ? days + ' days left' : (days === 1 ? 'last day' : 'offer ended');
+
+    // ---- FAQ ----
+    var FAQ = [
+      { q: 'What if I don’t like the taste?', a: 'Your first Starter Pack comes with a 30-day flavour guarantee. Not for you? Ask for a refund within 30 days of purchase, fill in a short survey and you get your €24.50 back (minus any discount) on your original payment method.' },
+      { q: 'What’s in the Energy Starter Pack?', a: '16 sachets: 4 each of Tropical Fruits, Wild Berries, Lemon Lime and Watermelon. You can order it with or without a 1.2 L Qalloo bottle.' },
+      { q: 'How much caffeine is in it?', a: '80 mg of natural caffeine per sachet, from guarana, green tea and Siberian ginseng. That’s about the same as a large cup of coffee.' },
+      { q: 'How do I use it?', a: 'Mix one sachet (5 g) with 750 ml of water and shake. Less water gives a stronger taste. Prefer sparkling? Mix the powder with about 100 ml of still water first, then top up.' },
+      { q: 'Is there sugar in it?', a: 'No. It’s sugar-free and around 7 kcal a serving, sweetened with sucralose. Also vegan, with natural flavours and no artificial colourings or preservatives.' },
+      { q: 'Who shouldn’t drink it?', a: 'Qalloo Energy is for adults: max one serving a day. Not for under-18s or pregnant or breastfeeding women. Don’t take it on an empty stomach or on the same day as other green tea products.' },
+      { q: 'Do I get stuck in a subscription?', a: 'No. The Starter Pack is a one-off order and can’t be put on a subscription. If you like it, you can subscribe to bigger packs later for 15% off.' },
+      { q: 'How fast is delivery?', a: 'Orders ship from Kontich, usually within 24 hours. Standard delivery in Belgium is €4.95, free from €49. Express (1–2 working days) is €8.95.' }
+    ];
+    var faqs = FAQ.map(function (f, i) {
+      var open = s.faq === i;
+      return Object.assign({}, f, { open: open, expanded: open ? 'true' : 'false', sign: open ? '−' : '+',
+        toggle: function () { self.setState({ faq: open ? -1 : i }); } });
+    });
+
+    // ---- bottom bar: always the next step ----
+    var barText, barCta, barGo;
+    var shakeFn = function () { self.setState({ energy: Math.min(100, s.energy + 22), flip: !s.flip }); };
+    if (s.screen === 'wake' && !awake) { barText = 'Ollo’s battery: ' + e + '%. Help him out?'; barCta = 'Shake'; barGo = shakeFn; }
+    else if (s.screen === 'wake') { barText = 'Ollo’s awake and wants to say thanks.'; barCta = 'Get Ollo’s secret'; barGo = goTo('quiz'); }
+    else if (s.screen === 'quiz' && !quizDone) { barText = 'Question ' + (qi + 1) + ' of 3 · code SLUMP5 at the end'; barCta = 'Back to Ollo'; barGo = goTo('wake'); }
+    else if (s.screen === 'quiz') { barText = result.name + ' · SLUMP5 unlocked'; barCta = 'See my pack'; barGo = goTo('pack'); }
+    else if (s.screen === 'pack') { barText = flavour + ' · €24.50 · SLUMP5'; barCta = 'Get my pack'; barGo = goTo('checkout'); }
+    else if (s.screen === 'faq') { barText = 'Not sure yet? 30-day flavour guarantee.'; barCta = 'Try it risk-free'; barGo = goTo('checkout'); }
+    else { barText = 'Energy Starter Pack · SLUMP5 applied'; barCta = 'Go to checkout'; barGo = function () {}; }
+
+    return {
+      isWake: s.screen === 'wake', isQuiz: s.screen === 'quiz', isPack: s.screen === 'pack',
+      isFaq: s.screen === 'faq', isCheckout: s.screen === 'checkout',
+      goWake: goTo('wake'), goQuiz: goTo('quiz'), goPack: goTo('pack'), goFaq: goTo('faq'), goCheckout: goTo('checkout'),
+
+      sourceLine: sourceLine, timeLine: timeLine,
+      clockBg: awake ? '#10204A' : (slump ? '#FF5B6E' : 'rgba(255,255,255,0.18)'),
+      clockFg: awake ? '#FFD84D' : (slump ? '#10204A' : '#FFFFFF'),
+      headline: headline, subline: subline,
+      heroBg: awake ? '#FFD84D' : this.mix('#22306A', '#4A5FA8', t),
+      heroFg: awake ? '#10204A' : '#FFFFFF',
+      haloBg: awake ? '#FFFFFF' : this.mix('#2E3F82', '#8FD8FF', t),
+      asleep: !awake, awake: awake,
+      energy: e, energyPct: e + '%',
+      meterColor: e < 40 ? '#FF5B6E' : (e < 100 ? '#FF9A5B' : '#136B3A'),
+      olloImg: awake ? BLOB.energy : BLOB.sleepy,
+      olloAlt: awake ? 'Energy Ollo, bright yellow and wide awake' : 'Sleepy Ollo, slumped and yawning',
+      olloClass: awake ? 'q-awake' : (s.energy > 12 ? (s.flip ? 'q-shakeA' : 'q-shakeB') : ''),
+      bottleClass: !awake && s.energy > 12 ? (s.flip ? 'q-shakeB' : 'q-shakeA') : '',
+      olloFilter: awake ? 'none' : 'saturate(' + (0.45 + 0.55 * t).toFixed(2) + ') brightness(' + (0.85 + 0.15 * t).toFixed(2) + ')',
+      liquidH: Math.round(150 * Math.max(0.15, t)),
+      liquidY: 220 - Math.round(150 * Math.max(0.15, t)),
+      liquidColor: this.mix('#CFEFFF', '#FFC233', t),
+      shakeLabel: e <= 12 ? 'Shake to wake Ollo' : 'Keep shaking (' + shakesLeft + ' more)',
+      shake: shakeFn,
+
+      quizTitle: quizDone ? 'Ollo’s secret, matched to you.' : 'Ollo’s about to share his secret.',
+      quizOpen: !quizDone, quizDone: quizDone,
+      qNum: qi + 1, qProgress: Math.round(((qi + 1) / 3) * 100) + '%',
+      question: question,
+      backLabel: qi > 0 ? 'Previous question' : 'Back to Ollo',
+      back: function () { if (qi === 0) { self.go('wake'); } else { self.setState({ q: qi - 1, answers: s.answers.slice(0, qi - 1) }); } },
+      restartQuiz: function () { self.setState({ q: 0, answers: [], copied: false, viewFlav: null }); },
+      result: result, swapLine: SWAP[s.answers[1]] || SWAP.none, flavour: flavour,
+
+      flavourTabs: flavourTabs, view: view, viewIsOther: viewId !== matchId,
+      matchImg: PACK[matchId].img, matchBg: PACK[matchId].bg, comboImg: PACK.all.img,
+      backToMatch: function () { self.setState({ viewFlav: null }); },
+      copyLabel: s.copied ? 'Copied' : 'Copy code',
+      copyCode: function () { try { navigator.clipboard.writeText('SLUMP5'); } catch (err) {} self.setState({ copied: true }); },
+      daysLeft: daysLeft,
+
+      faqs: faqs,
+      shareLabel: s.shared ? 'Link copied, go tag them' : 'Share my ' + result.name + ' result',
+      share: function () { try { navigator.clipboard.writeText('[campaign landing page URL]'); } catch (err) {} self.setState({ shared: true }); },
+
+      steps: steps,
+      barText: barText, barCta: barCta, barGo: barGo
+    };
+  }
+}
+</script>
+<script>
+// ---- page settings from the link: ?src=tiktok | ?src=booth  and  ?time=14:05 for demos ----
+(function () {
+  var q = new URLSearchParams(location.search);
+  var srcMap = { instagram: 'Instagram Reel', tiktok: 'TikTok', booth: 'Campus booth QR' };
+  var props = { source: srcMap[(q.get('src') || '').toLowerCase()] || 'Instagram Reel', clock: q.get('time') || 'Live' };
+  window.__mount(Component, props);
+})();
+</script>
+</body>
+</html>
